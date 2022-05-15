@@ -4,15 +4,14 @@ using TlsObjectModel;
 
 namespace TlsPrinter
 {
-
 	public class TlsPrinterSettings
 	{
 		public List<SslProtocols>? Versions { get; set; }
 		public SslProtocols? ClientVersion { get; set; }
 		public List<TlsCipherSuite>? Ciphers { get; set; }
-		public List<TlsExtension>? Extensions { get; set; }
-		public List<TlsCurve>? Curves { get; set; }
-		public List<TlsPointFormat>? PointFormats { get; set; }
+		public List<Extension>? Extensions { get; set; }
+		public List<Curve>? Curves { get; set; }
+		public List<PointFormat>? PointFormats { get; set; }
 		public SslClientAuthenticationOptions? SslOptions { get; set; }
 		public TlsPrinterSettings(SslClientAuthenticationOptions? SslOptions = null)
 		{
@@ -44,6 +43,18 @@ namespace TlsPrinter
 			}
 			return SslOptions;
 		}
+		internal ClientHello ToClientHello()
+		{
+			ClientHello clientHello = new ClientHello();
+			if (ClientVersion is not null) clientHello.ClientVersion = (SslProtocols)ClientVersion;
+			else clientHello.ClientVersion = SslProtocols.Tls12;
+			clientHello.Random = new byte[32];
+			clientHello.SessionId = new byte[32];
+			if (Ciphers is not null) clientHello.Ciphers = Ciphers;
+			if (Extensions is not null) clientHello.Extensions = Extensions;
+			if (Curves is not null) clientHello.Curves = Curves;
+			if (PointFormats is not null) clientHello.PointFormats = PointFormats;
+			return clientHello;
+		}
 	}
-
 }
