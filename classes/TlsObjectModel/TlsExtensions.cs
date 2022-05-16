@@ -38,7 +38,7 @@ namespace TlsObjectModel
 		{
 			if (type.IsFixedLength()) throw new ArgumentException();
 			bytes = new ArraySegment<byte>(bytes, 0, (int)GetLengthFieldLength(type)).ToArray();
-			return Utils.BytesToUInt64(bytes);
+			return TlsUtils.BytesToUInt64(bytes);
 		}
 		public static byte[] ToBytes(this Enum value)
 		{
@@ -54,7 +54,7 @@ namespace TlsObjectModel
 			if (value.GetType().IsFixedLength()) length = value.GetType().GetFixedLength();
 			else throw new NotSupportedException();
 			if (bytes.Length != length || bytes.Length > 8) throw new NotSupportedException();
-			ulong number = Utils.BytesToUInt64(bytes);
+			ulong number = TlsUtils.BytesToUInt64(bytes);
 			value = (Enum)Enum.ToObject(value.GetType(), number);
 		}
 		public static byte[] ToBytes(this ulong value, ulong length)

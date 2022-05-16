@@ -1,6 +1,6 @@
 namespace TlsObjectModel
 {
-	internal static class Utils
+	internal static class TlsUtils
 	{
 		public static ulong BytesToUInt64(byte[] bytes)
 		{

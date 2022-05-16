@@ -110,6 +110,9 @@ namespace TlsObjectModel
 						PendingBytes = new byte[0];
 						switch (type)
 						{
+							case ContentType.handshake:
+								fragment = new Handshake(contentBytes);
+								break;
 							default:
 								fragment = new UnknownRecordContent(contentBytes);
 								break;

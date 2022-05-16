@@ -3,9 +3,8 @@ namespace TlsObjectModel
 	public class Handshake : RecordContent
 	{
 		public HandshakeType msg_type;
-		HandshakeLength length;
-		HandshakeMessage? msg;
-		public Handshake(HandshakeMessage message)
+		HandshakeContent? msg;
+		public Handshake(HandshakeContent message)
 		{
 			msg = message;
 		}
@@ -15,58 +14,84 @@ namespace TlsObjectModel
 		}
 		public override void FromBytes(byte[] bytes)
 		{
-			throw new NotImplementedException();
+			if (BackingBytes is not null && BackingBytes.Length > 0)
+			{
+				throw new InvalidOperationException("Data already added to this object. Use 'AddBytes' instead.");
+			}
+			AddBytes(bytes);
 		}
 		public override void AddBytes(byte[] bytes)
 		{
-			throw new NotImplementedException();
+			if (PendingBytes is null) PendingBytes = new byte[0];
+			if (PendingBytes.Length == 0)
+			{
+				if (bytes.Length > 0)
+				{
+					PendingBytes = PendingBytes.Append(bytes[0]).ToArray();
+					msg_type = (HandshakeType)PendingBytes[0];
+					bytes = bytes.Remove(1);
+				}
+			}
+			if (PendingBytes.Length == 1)
+			{
+				if (bytes.Length > 0)
+				{
+					PendingBytes = PendingBytes.Append(bytes[0]).ToArray();
+					bytes = bytes.Remove(1);
+				}
+			}
+			if (PendingBytes.Length == 2)
+			{
+				if (bytes.Length > 0)
+				{
+					PendingBytes = PendingBytes.Append(bytes[0]).ToArray();
+					bytes = bytes.Remove(1);
+				}
+			}
+			if (PendingBytes.Length == 3)
+			{
+				if (bytes.Length > 0)
+				{
+					PendingBytes = PendingBytes.Append(bytes[0]).ToArray();
+					Length = TlsUtils.BytesToUInt64(PendingBytes[1..4]);
+					bytes = bytes.Remove(1);
+				}
+			}
+			if (PendingBytes.Length >= 4)
+			{
+				if (Length is null) throw new InvalidOperationException();
+				var remainingBytes = Length + 4 - (ulong)PendingBytes.LongLength;
+				if ((ulong)bytes.LongLength <= remainingBytes)
+				{
+					PendingBytes = PendingBytes.Concat(bytes).ToArray();
+					bytes = new byte[0];
+				}
+				else
+				{
+					PendingBytes = PendingBytes.Concat(bytes[0..(int)remainingBytes]).ToArray();
+					bytes = bytes[(int)remainingBytes..];
+				}
+				if (bytes.Length > 0) ExtraBytes = bytes;
+			}
+			if ((ulong)PendingBytes.LongLength == Length + 4)
+			{
+				BackingBytes = PendingBytes;
+				PendingBytes = new byte[0];
+				switch (msg_type)
+				{
+					default:
+						msg = new UnknownHandshakeContent(BackingBytes[4..]);
+						break;
+				}
+			}
 		}
 		public override byte[] ToBytes()
 		{
-			throw new NotImplementedException();
-		}
-	}
-	internal struct HandshakeLength
-	{
-		byte[] bytes = new byte[3] { 0, 0, 0 }; // stored in bigendian order
-		public UInt32 Length
-		{
-			get
-			{
-				if (bytes is null) return 0;
-				return GetUInt24(bytes);
-			}
-			set
-			{
-				bytes = FromUInt24(value);
-			}
-		}
-		public HandshakeLength(byte[] valueBytes)
-		{
-			if (valueBytes.Length != 3) throw new ArgumentException();
-			bytes = valueBytes;
-		}
-		public HandshakeLength(UInt32 value)
-		{
-			Length = value;
-		}
-		UInt32 GetUInt24(byte[] intBytes)
-		{
-			if (bytes.Length != 3) throw new InvalidOperationException();
-			intBytes = new byte[] { 0 }.Concat(intBytes).ToArray();
-			if (BitConverter.IsLittleEndian) intBytes = intBytes.Reverse().ToArray();
-			return BitConverter.ToUInt32(intBytes);
-		}
-		byte[] FromUInt24(UInt32 value)
-		{
-			byte[] intBytes = BitConverter.GetBytes(value);
-			if (BitConverter.IsLittleEndian) intBytes = intBytes.Reverse().ToArray();
-			if (intBytes[0] != 0) throw new OverflowException();
-			return new ArraySegment<byte>(intBytes, 1, 3).ToArray();
-		}
-		byte[] ToBytes()
-		{
-			return bytes;
+			if (Length is null || msg is null) throw new InvalidOperationException();
+			return new byte[] { (byte)msg_type }
+				.Concat(GetLengthBytes())
+				.Concat(msg.ToBytes())
+				.ToArray();
 		}
 	}
 }
