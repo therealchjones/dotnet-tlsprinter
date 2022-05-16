@@ -1,16 +1,16 @@
 namespace TlsObjectModel
 {
-	public class TLSPlaintext : Record
+	public class TlsPlaintext : Record
 	{
 		bool initialized;
 		public ContentType type { get; set; }
 		ProtocolVersion legacy_record_version;
 		RecordContent? fragment;
-		TLSPlaintext()
+		TlsPlaintext()
 		{
 
 		}
-		public TLSPlaintext(byte[] bytes) : this()
+		public TlsPlaintext(byte[] bytes) : this()
 		{
 			FromBytes(bytes);
 		}

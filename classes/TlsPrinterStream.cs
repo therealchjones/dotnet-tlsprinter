@@ -7,7 +7,7 @@ namespace TlsPrinter
 	public class TlsPrinterStream : Stream
 	{
 		bool HandshakeComplete = false;
-		TLSPlaintext? OriginalRecord { get; set; }
+		TlsPlaintext? OriginalRecord { get; set; }
 		System.Random rng;
 		NetworkStream tcpStream;
 		public string? JA3 { get; }
@@ -67,7 +67,7 @@ namespace TlsPrinter
 			}
 			else
 			{
-				if (OriginalRecord is null) OriginalRecord = new TLSPlaintext(array);
+				if (OriginalRecord is null) OriginalRecord = new TlsPlaintext(array);
 				else if (OriginalRecord.NeedsBytes()) OriginalRecord.AddBytes(array);
 				if (!OriginalRecord.NeedsBytes())
 				{

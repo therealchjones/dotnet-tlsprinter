@@ -1,6 +1,6 @@
 namespace TlsObjectModel
 {
-	public class TLSInnerPlaintext
+	public class TlsInnerPlaintext
 	{
 		byte[]? content;
 		ContentType type;

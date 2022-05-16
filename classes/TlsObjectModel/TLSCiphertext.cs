@@ -1,6 +1,6 @@
 namespace TlsObjectModel
 {
-	public class TLSCiphertext
+	public class TlsCiphertext
 	{
 		ContentType opaque_type = ContentType.application_data;
 		ProtocolVersion legacy_record_version = new ProtocolVersion(new byte[] { 3, 3 });

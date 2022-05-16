@@ -17,7 +17,7 @@ namespace TlsObjectModel
 		});
 		private static readonly ReadOnlyDictionary<Type, UInt32> TlsLengthFieldLengths = new(new Dictionary<Type, uint>() {
 			{ typeof(Handshake), 3},
-			{ typeof(TLSPlaintext), 2},
+			{ typeof(TlsPlaintext), 2},
 		});
 		public static bool IsFixedLength(this Type type)
 		{
