@@ -85,32 +85,36 @@ namespace TlsObjectModel
 					Length = this.GetType().GetLength(PendingBytes[3..5]);
 				}
 			}
-			if (Length is null) throw new InvalidOperationException();
-			if (PendingBytes.LongLength < (long)Length + 5)
+			if (PendingBytes.Length >= 5)
 			{
-				ulong remainingBytes = (ulong)Length + 5 - (ulong)PendingBytes.Length;
-				if (bytes.LongLength >= (long)remainingBytes)
+				if (Length is null) throw new InvalidOperationException();
+				if (PendingBytes.LongLength < (long)Length + 5)
 				{
-					PendingBytes = PendingBytes.Concat(new ArraySegment<byte>(bytes, 0, (int)remainingBytes)).ToArray();
-					bytes = bytes.Remove((int)remainingBytes);
-				}
-				else
-				{
-					PendingBytes = PendingBytes.Concat(bytes).ToArray();
-					bytes = new byte[0];
-				}
-			}
-			if (bytes.Length > 0) ExtraBytes = bytes;
-			if (PendingBytes.Length == (int)Length + 5)
-			{
-				BackingBytes = PendingBytes;
-				byte[] contentBytes = new ArraySegment<byte>(BackingBytes, 5, BackingBytes.Length - 5).ToArray();
-				PendingBytes = new byte[0];
-				switch (type)
-				{
-					default:
-						fragment = new UnknownRecordContent(contentBytes);
-						break;
+					long remainingBytes = (long)Length + 5 - PendingBytes.LongLength;
+					if (bytes.LongLength >= remainingBytes)
+					{
+						PendingBytes = PendingBytes.Concat(new ArraySegment<byte>(bytes, 0, (int)remainingBytes)).ToArray();
+						bytes = bytes.Remove((int)remainingBytes);
+					}
+					else
+					{
+						PendingBytes = PendingBytes.Concat(bytes).ToArray();
+						bytes = new byte[0];
+					}
+
+					if (bytes.Length > 0) ExtraBytes = bytes;
+					if (PendingBytes.Length == (int)Length + 5)
+					{
+						BackingBytes = PendingBytes;
+						byte[] contentBytes = new ArraySegment<byte>(BackingBytes, 5, BackingBytes.Length - 5).ToArray();
+						PendingBytes = new byte[0];
+						switch (type)
+						{
+							default:
+								fragment = new UnknownRecordContent(contentBytes);
+								break;
+						}
+					}
 				}
 			}
 		}

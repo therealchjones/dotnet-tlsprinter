@@ -1,5 +1,8 @@
 namespace TlsObjectModel
 {
+	/// <summary>
+	/// Represents the types of messages to be sent at the TLS Record Layer
+	/// </summary>
 	public enum ContentType : byte
 	{
 		invalid = 0,

@@ -3,29 +3,26 @@ using System.Security.Authentication;
 
 namespace TlsObjectModel
 {
-	/*
-public class ClientHello : TlsObject
-{
-ProtocolVersion legacy_version = new(new byte[] { 3, 3 });
-Random random;
-byte[] legacy_session_id;
-List<CipherSuite> cipher_suites;
-byte[] legacy_compression_methods;
-List<Extension> extensions;
-}
-*/
-
-	public class ClientHello
+	public class ClientHello : TlsObject
 	{
-		SslProtocols Versions;
+		ProtocolVersion legacy_version = new(new byte[] { 3, 3 });
 		public SslProtocols ClientVersion;
 		public byte[]? Random;
-		public byte[]? SessionId;
-		public List<TlsCipherSuite>? Ciphers;
+		public byte[]? legacy_session_id;
+		public List<TlsCipherSuite>? cipher_suites;
+		public byte[]? legacy_compression_methods;
 		public List<Extension>? Extensions;
 		public List<Curve>? Curves;
 		public List<PointFormat>? PointFormats;
-		public byte[] ToBytes()
+		public override void FromBytes(byte[] bytes)
+		{
+			throw new NotImplementedException();
+		}
+		public override void AddBytes(byte[] bytes)
+		{
+			throw new NotImplementedException();
+		}
+		public override byte[] ToBytes()
 		{
 			List<byte[]> handshakeBuilder = new();
 			List<byte[]> messageBuilder = new();
@@ -43,10 +40,6 @@ List<Extension> extensions;
 			byte[] extensionsLength = new byte[] { 0, 0 };
 
 			return new byte[0];
-		}
-		public void SetBase(byte[] clientHello)
-		{
-
 		}
 	}
 }
