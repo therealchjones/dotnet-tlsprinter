@@ -46,14 +46,18 @@ namespace TlsPrinter
 		internal ClientHello ToClientHello()
 		{
 			ClientHello clientHello = new ClientHello();
-			if (ClientVersion is not null) clientHello.ClientVersion = (SslProtocols)ClientVersion;
-			else clientHello.ClientVersion = SslProtocols.Tls12;
 			clientHello.Random = new byte[32];
 			clientHello.legacy_session_id = new byte[32];
-			if (Ciphers is not null) clientHello.cipher_suites = Ciphers;
+			if (Ciphers is not null)
+			{
+				foreach (TlsCipherSuite cipher in Ciphers)
+				{
+					clientHello.cipher_suites.Add(new CipherSuite(cipher));
+				}
+			}
 			if (Extensions is not null) clientHello.Extensions = Extensions;
-			if (Curves is not null) clientHello.Curves = Curves;
-			if (PointFormats is not null) clientHello.PointFormats = PointFormats;
+			// if (Curves is not null) clientHello.Curves = Curves;
+			// if (PointFormats is not null) clientHello.PointFormats = PointFormats;
 			return clientHello;
 		}
 	}

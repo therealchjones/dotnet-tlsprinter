@@ -1,6 +1,6 @@
 namespace TlsObjectModel
 {
-	public enum ExtensionType
+	public enum ExtensionType : ushort
 	{
 		server_name = 1,
 		max_fragment_length = 2,
@@ -14,11 +14,13 @@ namespace TlsObjectModel
 		client_certificate_type = 19,
 		server_certificate_type = 20,
 		padding = 21,
+		RESERVED = 40,
 		pre_shared_key = 41,
 		early_data = 42,
 		supported_version = 43,
 		cookie = 44,
 		psk_key_exchange_modes = 45,
+		RESERVED_2 = 46,
 		certificate_authorities = 47,
 		oid_filters = 48,
 		post_handshake_auth = 49,

@@ -1,9 +1,7 @@
 namespace TlsObjectModel
 {
 
-	public class Extension
+	public abstract class Extension : TlsObject
 	{
-		ExtensionType extension_type;
-		byte[]? extension_data;
 	}
 }

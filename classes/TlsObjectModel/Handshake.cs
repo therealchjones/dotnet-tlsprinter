@@ -79,6 +79,9 @@ namespace TlsObjectModel
 				PendingBytes = new byte[0];
 				switch (msg_type)
 				{
+					case HandshakeType.client_hello:
+						msg = new ClientHello(BackingBytes[4..]);
+						break;
 					default:
 						msg = new UnknownHandshakeContent(BackingBytes[4..]);
 						break;
@@ -88,9 +91,10 @@ namespace TlsObjectModel
 		public override byte[] ToBytes()
 		{
 			if (Length is null || msg is null) throw new InvalidOperationException();
+			byte[] msgBytes = msg.ToBytes();
 			return new byte[] { (byte)msg_type }
 				.Concat(GetLengthBytes())
-				.Concat(msg.ToBytes())
+				.Concat(msgBytes)
 				.ToArray();
 		}
 	}
