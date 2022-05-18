@@ -1,5 +1,3 @@
-using System.Security.Authentication;
-
 namespace TlsObjectModel
 {
 	public class ClientHello : HandshakeContent
