@@ -72,21 +72,5 @@ namespace TlsObjectModel
 			if (length < i) throw new ArgumentException();
 			return new ArraySegment<byte>(bytes, i, length - i).ToArray();
 		}
-		// May not be needed in the future, should probably construct the proper type
-		// from a switch on the type header instead
-		public static Extension ToExtension(this byte[] bytes)
-		{
-			ArgumentNullException.ThrowIfNull(bytes);
-			if (bytes.Length < 4) throw new ArgumentException();
-			ulong extensionLength = TlsUtils.BytesToUInt64(bytes[2..4]);
-			if ((ulong)bytes.LongLength != extensionLength + 4) throw new ArgumentException();
-			switch (bytes[0])
-			{
-				default:
-					return new UnknownExtension(bytes);
-			}
-			throw new NotImplementedException();
-		}
 	}
-
 }

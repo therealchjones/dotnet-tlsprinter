@@ -85,10 +85,15 @@ namespace TlsObjectModel
 					{
 						extensionType = (ExtensionType)TlsUtils.BytesToUInt64(BackingBytes[(int)(index + totalLength)..(int)(index + totalLength + 2)]);
 						thisLength = (ushort)TlsUtils.BytesToUInt64(BackingBytes[(int)(index + totalLength + 2)..(int)(index + totalLength + 4)]);
-						// the bytes from which to construct the extension includes the extension header (type, length)
-						// this may change when the different extension types have their own classes
 						byte[] extensionBytes = BackingBytes[(int)(index + totalLength)..(int)(index + totalLength + 4 + thisLength)];
-						Extensions.Add(extensionBytes.ToExtension());
+						Extension newExtension;
+						switch (extensionType)
+						{
+							default:
+								newExtension = new UnknownExtension(extensionBytes);
+								break;
+						}
+						Extensions.Add(newExtension);
 						totalLength = totalLength + thisLength + 4;
 					}
 				}
