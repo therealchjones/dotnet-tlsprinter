@@ -2,8 +2,8 @@ namespace TlsObjectModel
 {
 	public enum ExtensionType : ushort
 	{
-		server_name = 1,
-		max_fragment_length = 2,
+		server_name = 0,
+		max_fragment_length = 1,
 		status_request = 5,
 		supported_groups = 10,
 		signature_algorithms = 13,

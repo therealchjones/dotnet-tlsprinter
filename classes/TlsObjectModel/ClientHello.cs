@@ -89,6 +89,9 @@ namespace TlsObjectModel
 						Extension newExtension;
 						switch (extensionType)
 						{
+							//case ExtensionType.server_name:
+							//newExtension = new ServerNameExtension(extensionBytes);
+							//break;
 							default:
 								newExtension = new UnknownExtension(extensionBytes);
 								break;

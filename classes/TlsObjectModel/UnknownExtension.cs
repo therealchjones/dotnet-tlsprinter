@@ -2,7 +2,7 @@ namespace TlsObjectModel
 {
 	public class UnknownExtension : Extension
 	{
-		ushort ExtensionType;
+		ExtensionType ExtensionType;
 		byte[] ExtensionData = new byte[0];
 		public UnknownExtension(byte[] bytes)
 		{
@@ -29,7 +29,7 @@ namespace TlsObjectModel
 					case 1:
 						BackingBytes = BackingBytes.Append(bytes[0]).ToArray();
 						bytes = bytes.Remove(1);
-						ExtensionType = (ushort)TlsUtils.BytesToUInt64(BackingBytes[0..2]);
+						ExtensionType = (ExtensionType)TlsUtils.BytesToUInt64(BackingBytes[0..2]);
 						break;
 					case 2:
 						BackingBytes = BackingBytes.Append(bytes[0]).ToArray();
